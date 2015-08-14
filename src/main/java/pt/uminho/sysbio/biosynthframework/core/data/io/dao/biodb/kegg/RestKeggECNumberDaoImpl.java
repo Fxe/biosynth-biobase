@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import pt.uminho.sysbio.biosynthframework.Orientation;
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggECNumberEntity;
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggReactionEntity;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggECNumberFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggReactionFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.io.ReactionDao;
 
@@ -24,7 +25,7 @@ extends AbstractRestfulKeggDao {
 	private static final String restRxnQuery = "http://rest.kegg.jp/get/ec:%s";
 
 	
-	public String getECNumberByEntry(String entry) {
+	public KeggECNumberEntity getECNumberByEntry(String entry) {
 		String restRxnQuery = String.format(RestKeggECNumberDaoImpl.restRxnQuery, entry);
 		String localPath =getPathFolder() + entry ;
 		
@@ -38,7 +39,7 @@ extends AbstractRestfulKeggDao {
 			LOGGER.info(localPath);
 			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath  +".txt");
 			
-//			KeggReactionFlatFileParser parser = new KeggReactionFlatFileParser(rnFlatFile);
+			KeggECNumberFlatFileParser parser = new KeggECNumberFlatFileParser(rnFlatFile);
 //			ec.setEntry(parser.getEntry());
 //			ec.setName(parser.getName());
 //			ec.setComment(parser.getComment());

@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.uminho.sysbio.biosynthframework.Orientation;
+import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggGeneEntity;
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggReactionEntity;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggGeneFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggReactionFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.io.ReactionDao;
 
@@ -22,7 +24,7 @@ extends AbstractRestfulKeggDao  {
 	private static final String restRxnQuery = "http://rest.kegg.jp/get/%s";
 	
 
-	public String getGeneByEntry(String entry) {
+	public KeggGeneEntity getGeneByEntry(String entry) {
 		String restRxnQuery = String.format(RestKeggGenesDaoImpl.restRxnQuery, entry);
 		
 		String localPath = getPathFolder() + entry ;
@@ -35,7 +37,7 @@ extends AbstractRestfulKeggDao  {
 			LOGGER.info(localPath);
 			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath + ".txt");
 			
-//			KeggReactionFlatFileParser parser = new KeggReactionFlatFileParser(rnFlatFile);
+			KeggGeneFlatFileParser parser = new KeggGeneFlatFileParser(rnFlatFile);
 //			rxn.setEntry(parser.getEntry());
 //			rxn.setName(parser.getName());
 //			rxn.setOrientation(Orientation.Reversible);

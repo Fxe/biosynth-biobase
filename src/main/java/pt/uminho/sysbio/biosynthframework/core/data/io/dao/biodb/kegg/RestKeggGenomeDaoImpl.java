@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggGenomeEntity;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggGenomeFlatFileParser;
 
 public class RestKeggGenomeDaoImpl
 extends AbstractRestfulKeggDao {
@@ -33,7 +34,7 @@ extends AbstractRestfulKeggDao {
 			LOGGER.info(localPath);
 			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath +".txt");
 			
-//			KeggGenomeFlatFileParser parser = new KeggGenomeFlatFileParser(rnFlatFile);
+			KeggGenomeFlatFileParser parser = new KeggGenomeFlatFileParser(rnFlatFile);
 //			rxn.setEntry(parser.getEntry());
 //			rxn.setName(parser.getName());
 //			rxn.setComment(parser.getComment());
@@ -51,7 +52,7 @@ extends AbstractRestfulKeggDao {
 			LOGGER.error(e.getMessage());
 			return null;
 		}
-		return rxn;
+		return rnFlatFile;
 	}
 
 

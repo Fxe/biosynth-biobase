@@ -8,6 +8,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggModuleEntity;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggModuleFlatFileParser;
+
 public class RestKeggModuleDaoImpl
 extends AbstractRestfulKeggDao {
 
@@ -18,7 +21,7 @@ extends AbstractRestfulKeggDao {
 	
 	
 
-	public String getModuleByEntry(String entry) {
+	public KeggModuleEntity getModuleByEntry(String entry) {
 		String restRxnQuery = String.format(RestKeggModuleDaoImpl.restRxnQuery, entry);
 		
 		String localPath = getPathFolder() + entry ;
@@ -31,7 +34,7 @@ extends AbstractRestfulKeggDao {
 			LOGGER.info(localPath);
 			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath + ".txt");
 			
-//			KeggReactionFlatFileParser parser = new KeggReactionFlatFileParser(rnFlatFile);
+			KeggModuleFlatFileParser parser = new KeggModuleFlatFileParser(rnFlatFile);
 //			rxn.setEntry(parser.getEntry());
 //			rxn.setName(parser.getName());
 //			rxn.setOrientation(Orientation.Reversible);
