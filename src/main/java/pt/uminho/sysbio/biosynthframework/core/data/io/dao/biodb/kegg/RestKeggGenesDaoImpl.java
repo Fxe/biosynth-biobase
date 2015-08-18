@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pt.uminho.sysbio.biosynthframework.Orientation;
+import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggECNumberEntity;
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggGeneEntity;
 import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggReactionEntity;
 import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggGeneFlatFileParser;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggGenericEntityFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggReactionFlatFileParser;
 import pt.uminho.sysbio.biosynthframework.io.ReactionDao;
 
@@ -21,44 +23,23 @@ extends AbstractRestfulKeggDao  {
 	public static boolean DELAY_ON_IO_ERROR = false;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestKeggGenesDaoImpl.class);
-	private static final String restRxnQuery = "http://rest.kegg.jp/get/%s";
+	private static final String restGeneQuery = "http://rest.kegg.jp/get/%s";
 	
 
 	public KeggGeneEntity getGeneByEntry(String entry) {
-		String restRxnQuery = String.format(RestKeggGenesDaoImpl.restRxnQuery, entry);
-		
+		String restGeneQuery = String.format(RestKeggGenesDaoImpl.restGeneQuery, entry);
 		String localPath = getPathFolder() + entry ;
-//		KeggReactionEntity rxn = new KeggReactionEntity();
-		
-		String rnFlatFile = null;
+		KeggGeneEntity geneEntity = null;
 		
 		try {
-			LOGGER.info(restRxnQuery);
+			LOGGER.info(restGeneQuery);
 			LOGGER.info(localPath);
-			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath + ".txt");
-			
-			KeggGeneFlatFileParser parser = new KeggGeneFlatFileParser(rnFlatFile);
-//			rxn.setEntry(parser.getEntry());
-//			rxn.setName(parser.getName());
-//			rxn.setOrientation(Orientation.Reversible);
-//			rxn.setComment(parser.getComment());
-//			rxn.setRemark(parser.getRemark());
-//			rxn.setDefinition(parser.getDefinition());
-//			rxn.setEquation(parser.getEquation());
-//			rxn.setEnzymes(parser.getEnzymes());
-//			rxn.setPathways(parser.getPathways());
-//			rxn.setRpairs(parser.getRPairs());
-//			rxn.setOrthologies(parser.getOrthologies());
-//			rxn.setLeft(parser.getLeft());
-//			rxn.setRight(parser.getRight());
-			
-		} catch (IOException e) {
+			String rnFlatFile = this.getLocalOrWeb(restGeneQuery, localPath + ".txt");
+			geneEntity = KeggGenericEntityFlatFileParser.parse(KeggGeneEntity.class, rnFlatFile);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			
-//			LOGGER.debug(e.getStackTrace());
-			return null;
 		}
-		return rnFlatFile;
+		return geneEntity;
 	}
 
 
