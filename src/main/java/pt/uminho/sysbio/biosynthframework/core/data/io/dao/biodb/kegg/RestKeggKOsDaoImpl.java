@@ -8,12 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pt.uminho.sysbio.biosynthframework.Orientation;
-import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggKOEntiry;
-import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggReactionEntity;
-import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggKOFlatFileParser;
-import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggReactionFlatFileParser;
-import pt.uminho.sysbio.biosynthframework.io.ReactionDao;
+import pt.uminho.sysbio.biosynthframework.biodb.kegg.KeggKOEntity;
+import pt.uminho.sysbio.biosynthframework.core.data.io.dao.biodb.kegg.parser.KeggGenericEntityFlatFileParser;
 
 public class RestKeggKOsDaoImpl
 extends AbstractRestfulKeggDao {
@@ -25,48 +21,20 @@ extends AbstractRestfulKeggDao {
 	
 	
 
-	public KeggKOEntiry getKOByEntry(String entry) {
+	public KeggKOEntity getKOByEntry(String entry) {
 		String restRxnQuery = String.format(RestKeggKOsDaoImpl.restRxnQuery, entry);
-		
 		String localPath = getPathFolder() + entry ;
-//		KeggReactionEntity rxn = new KeggReactionEntity();
-		
-		String rnFlatFile = null;
+		KeggKOEntity ko = null;
 		
 		try {
 			LOGGER.info(restRxnQuery);
 			LOGGER.info(localPath);
-			rnFlatFile = this.getLocalOrWeb(restRxnQuery, localPath + entry +".txt");
-			
-			KeggKOFlatFileParser parser = new KeggKOFlatFileParser(rnFlatFile);
-//			rxn.setEntry(parser.getEntry());
-//			rxn.setName(parser.getName());
-//			rxn.setOrientation(Orientation.Reversible);
-//			rxn.setComment(parser.getComment());
-//			rxn.setRemark(parser.getRemark());
-//			rxn.setDefinition(parser.getDefinition());
-//			rxn.setEquation(parser.getEquation());
-//			rxn.setEnzymes(parser.getEnzymes());
-//			rxn.setPathways(parser.getPathways());
-//			rxn.setRpairs(parser.getRPairs());
-//			rxn.setOrthologies(parser.getOrthologies());
-//			rxn.setLeft(parser.getLeft());
-//			rxn.setRight(parser.getRight());
-			
-		} catch (IOException e) {
+			String koFlatFile = this.getLocalOrWeb(restRxnQuery, localPath + entry +".txt");
+			ko = KeggGenericEntityFlatFileParser.parse(KeggKOEntity.class, koFlatFile);
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			
-//			if (DELAY_ON_IO_ERROR) {
-//				try {
-//					Thread.sleep(300000);
-//				} catch (Exception es) {
-//					System.out.println(es.getMessage());
-//				}
-//			}
-//			LOGGER.debug(e.getStackTrace());
-			return null;
 		}
-		return rnFlatFile;
+		return ko;
 	}
 
 	public Set<String> getAllKOEntries() {
